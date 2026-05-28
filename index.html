@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🌸 eine kleine frage 🌸</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  
+  html, body {
+    overflow-x: hidden;
+    overscroll-behavior: none;
+    width: 100%;
+    height: 100%;
+  }
+  
+  body {
+    font-family: 'Quicksand', sans-serif;
+    background: linear-gradient(135deg, #ffe0ec 0%, #fff5f8 50%, #ffe8f1 100%);
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b2c3e;
+    position: relative;
+    padding: 20px;
+  }
+  
+  /* Schwebende Kirschblüten im Hintergrund */
+  .blossom {
+    position: fixed;
+    font-size: 20px;
+    opacity: 0.6;
+    pointer-events: none;
+    animation: float 8s ease-in-out infinite;
+    z-index: 0;
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(15deg); }
+  }
+  
+  @keyframes drift {
+    0% { transform: translateY(-10vh) translateX(0) rotate(0deg); }
+    100% { transform: translateY(110vh) translateX(30px) rotate(360deg); }
+  }
+  
+  .falling-petal {
+    position: fixed;
+    font-size: 18px;
+    pointer-events: none;
+    animation: drift linear infinite;
+    z-index: 0;
+    opacity: 0.7;
+  }
+  
+  /* Karte */
+  .card {
+    background: white;
+    border-radius: 28px;
+    padding: 36px 28px;
+    max-width: 380px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(255, 130, 170, 0.25), 0 0 0 1px rgba(255, 200, 220, 0.4);
+    text-align: center;
+    position: relative;
+    z-index: 10;
+    animation: cardIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(30px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  
+  /* Screen Wechsel */
+  .screen { display: none; }
+  .screen.active { display: block; animation: fadeIn 0.5s ease both; }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* Deko Element oben */
+  .top-decor {
+    width: 110px;
+    height: 110px;
+    border-radius: 22px;
+    margin: 0 auto 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 56px;
+    background: linear-gradient(135deg, #fff0f5, #ffd9e8);
+    box-shadow: 0 8px 20px rgba(255, 130, 170, 0.25);
+    animation: wiggle 3s ease-in-out infinite;
+  }
+  
+  .top-decor.shock {
+    background: linear-gradient(135deg, #ffb3d1, #ff8eb8);
+  }
+  
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+  }
+  
+  /* Überschriften */
+  h1 {
+    font-family: 'Caveat', cursive;
+    font-size: 34px;
+    line-height: 1.2;
+    color: #8b2c4d;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  
+  .subtitle {
+    font-size: 14px;
+    color: #b06480;
+    margin-bottom: 24px;
+    font-weight: 500;
+  }
+  
+  /* Frage-Screen mit schwebendem No-Button */
+  .question-area {
+    position: relative;
+    min-height: 180px;
+    margin-top: 8px;
+  }
+  
+  .yes-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 60px;
+  }
+  
+  button {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 14px 28px;
+    border: none;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    color: white;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .yes-btn {
+    background: linear-gradient(135deg, #ff8eb8, #ff6ba6);
+    box-shadow: 0 6px 16px rgba(255, 107, 166, 0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, font-size 0.4s ease, padding 0.4s ease;
+  }
+  
+  .yes-btn:active {
+    transform: scale(0.95);
+  }
+  
+  /* Schwebender No-Button */
+  .no-btn {
+    background: linear-gradient(135deg, #d4b8e8, #b89ad4);
+    box-shadow: 0 6px 16px rgba(184, 154, 212, 0.4);
+    position: absolute;
+    transition: top 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+                transform 0.5s ease,
+                font-size 0.4s ease,
+                padding 0.4s ease;
+    z-index: 5;
+    animation: hover-float 3s ease-in-out infinite;
+  }
+  
+  @keyframes hover-float {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-8px) rotate(2deg); }
+  }
+  
+  .okay-btn {
+    background: linear-gradient(135deg, #ff8eb8, #ff6ba6);
+    box-shadow: 0 6px 16px rgba(255, 107, 166, 0.4);
+    margin-top: 8px;
+  }
+  
+  .okay-btn:active { transform: scale(0.95); }
+  
+  /* Yay screen */
+  h1.shocked {
+    font-family: 'Caveat', cursive;
+    font-size: 36px;
+    line-height: 1.15;
+    color: #8b2c4d;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    letter-spacing: 0.5px;
+  }
+  
+  /* Einladungs-Screen */
+  .invitation-box {
+    background: linear-gradient(135deg, #fff0f5, #ffe0ec);
+    border: 2px dashed #ff8eb8;
+    border-radius: 20px;
+    padding: 28px 20px;
+    margin: 20px 0;
+  }
+  
+  .invitation-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #b06480;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  
+  .invitation-date {
+    font-family: 'Caveat', cursive;
+    font-size: 44px;
+    font-weight: 700;
+    color: #8b2c4d;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  
+  .invitation-time {
+    font-family: 'Caveat', cursive;
+    font-size: 30px;
+    color: #b06480;
+    font-weight: 600;
+  }
+  
+  .invitation-divider {
+    width: 40px;
+    height: 2px;
+    background: #ff8eb8;
+    margin: 14px auto;
+    border-radius: 2px;
+  }
+  
+  /* Location-Auswahl */
+  .field {
+    margin-bottom: 18px;
+    text-align: left;
+  }
+  
+  .field label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #8b2c4d;
+    margin-bottom: 10px;
+  }
+  
+  .field select {
+    width: 100%;
+    padding: 16px;
+    border: 2px solid #ffd9e8;
+    border-radius: 14px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 14px;
+    color: #6b2c3e;
+    background-color: #fff8fb;
+    transition: border-color 0.2s ease;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b2c4d' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 18px;
+    padding-right: 42px;
+    line-height: 1.4;
+  }
+  
+  .field select:focus {
+    outline: none;
+    border-color: #ff8eb8;
+  }
+  
+  .submit-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #ff8eb8, #ff6ba6);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(255, 107, 166, 0.4);
+    margin-top: 8px;
+  }
+  
+  .submit-btn:active { transform: scale(0.98); }
+  
+  /* Confirmation screen */
+  .confetti-emoji {
+    font-size: 60px;
+    margin: 10px 0 20px;
+    animation: bounce 1s ease infinite;
+  }
+  
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+  }
+  
+  .final-message {
+    font-size: 15px;
+    color: #6b2c3e;
+    line-height: 1.6;
+    margin-top: 16px;
+    padding: 18px;
+    background: linear-gradient(135deg, #fff0f5, #ffe0ec);
+    border-radius: 16px;
+  }
+  
+  .final-message strong {
+    color: #8b2c4d;
+  }
+  
+  /* Mobile Anpassungen */
+  @media (max-width: 380px) {
+    .card { padding: 28px 22px; }
+    h1 { font-size: 30px; }
+    h1.shocked { font-size: 30px; }
+    .invitation-date { font-size: 38px; }
+    .invitation-time { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Schwebende Deko Blüten -->
+<div class="blossom" style="top: 8%; left: 8%; animation-delay: 0s;">🌸</div>
+<div class="blossom" style="top: 15%; right: 10%; animation-delay: 1s;">🌸</div>
+<div class="blossom" style="bottom: 20%; left: 6%; animation-delay: 2s;">🌸</div>
+<div class="blossom" style="bottom: 10%; right: 8%; animation-delay: 3s;">🌸</div>
+<div class="blossom" style="top: 40%; left: 4%; animation-delay: 1.5s; font-size: 14px;">🌸</div>
+<div class="blossom" style="top: 60%; right: 5%; animation-delay: 2.5s; font-size: 14px;">🌸</div>
+
+<!-- Fallende Blüten -->
+<div class="falling-petal" style="left: 10%; animation-duration: 12s; animation-delay: 0s;">🌸</div>
+<div class="falling-petal" style="left: 30%; animation-duration: 15s; animation-delay: 3s;">🌸</div>
+<div class="falling-petal" style="left: 50%; animation-duration: 10s; animation-delay: 6s;">🌸</div>
+<div class="falling-petal" style="left: 70%; animation-duration: 14s; animation-delay: 2s;">🌸</div>
+<div class="falling-petal" style="left: 90%; animation-duration: 11s; animation-delay: 5s;">🌸</div>
+
+<!-- Screen 1: Die Frage -->
+<div class="card">
+  <div class="screen active" id="screen-question">
+    <div class="top-decor">🌸</div>
+    <h1>Du und Ich — Date Night? &lt;3</h1>
+    <p class="subtitle">Hallo Mausbär, möchtest du mit mir auf ein Date gehen?</p>
+    <div class="question-area" id="questionArea">
+      <button class="no-btn" id="noBtn">nö... 🙈</button>
+      <div class="yes-container">
+        <button class="yes-btn" id="yesBtn" onclick="sayYes()">JA 💕</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 2: Glücklichste Maus -->
+  <div class="screen" id="screen-yay">
+    <div class="top-decor shock">💖</div>
+    <h1 class="shocked">ICH BIN DIE GLÜCKLICHSTE MAUS DER WELT</h1>
+    <p class="subtitle">jaaa Date-Night mit dir ✨💕</p>
+    <button class="okay-btn" onclick="showInvitation()">und jetzt? →</button>
+  </div>
+
+  <!-- Screen 3: Einladung mit fixem Datum -->
+  <div class="screen" id="screen-invitation">
+    <div class="top-decor">💌</div>
+    <h1>Ich entführ dich</h1>
+    <p class="subtitle">save the date ✨</p>
+    
+    <div class="invitation-box">
+      <div class="invitation-label">— Save The Date —</div>
+      <div class="invitation-date">29.05.2026</div>
+      <div class="invitation-divider"></div>
+      <div class="invitation-time">19 Uhr</div>
+    </div>
+    
+    <button class="okay-btn" onclick="showLocation()">Und wohin gehts? →</button>
+  </div>
+
+  <!-- Screen 4: Wohin gehen wir? -->
+  <div class="screen" id="screen-location">
+    <div class="top-decor">🍽️</div>
+    <h1>Your Choice!</h1>
+    <p class="subtitle">Eine kleine Vorauswahl für dich:</p>
+    
+    <div class="field">
+      <label>Deine Wahl:</label>
+      <select id="locationInput">
+        <option value="">Wähl einen Ort aus...</option>
+        <option value="Pasquale">Pasquale — Du und Ich, zwei Pizzen, eine Flasche Wein &lt;3</option>
+        <option value="Kadokko">Kadokko — Shibuya Feelings mitten in HD??? Sushi, Sake, Sau viel Liebe.</option>
+        <option value="Café Burkhardt">Café Burkhardt — Old School Heidelberg, da wo Saša Stanišić gearbeitet hat!!</option>
+        <option value="Óle Óle">Óle Óle — Tapas ??? Mir sind die Wortspiele ausgegangen</option>
+      </select>
+    </div>
+    
+    <button class="submit-btn" onclick="confirmDate()">Fixe Sache &lt;3</button>
+  </div>
+
+  <!-- Screen 5: Bestätigung & Mail -->
+  <div class="screen" id="screen-done">
+    <div class="confetti-emoji">🎉</div>
+    <h1>YESSS!! 💕</h1>
+    <div class="final-message" id="finalMsg">
+      Damit ich es nicht vergesse: schick mir eine kurze Bestätigung per Mail! 💌
+    </div>
+    <button class="submit-btn" id="mailBtn" onclick="sendMail()" style="margin-top: 20px;">
+      📧 Bestätigung schicken
+    </button>
+    <p class="subtitle" style="margin-top: 20px; font-size: 12px;">
+      öffnet dein Mail-Programm mit fertiger Nachricht ✨
+    </p>
+  </div>
+</div>
+
+<script>
+  // ===== Schwebender No-Button =====
+  const noBtn = document.getElementById('noBtn');
+  const questionArea = document.getElementById('questionArea');
+  let dodgeCount = 0;
+  
+  // Initial position für no-button
+  function placeNoBtn(top, left) {
+    noBtn.style.top = top + 'px';
+    noBtn.style.left = left + 'px';
+  }
+  
+  function initNoBtn() {
+    const areaRect = questionArea.getBoundingClientRect();
+    const btnRect = noBtn.getBoundingClientRect();
+    // Top-rechts startposition
+    const startTop = 0;
+    const startLeft = Math.max(0, areaRect.width - btnRect.width - 10);
+    placeNoBtn(startTop, startLeft);
+  }
+  
+  function dodgeNo() {
+    dodgeCount++;
+    const areaRect = questionArea.getBoundingClientRect();
+    const btnRect = noBtn.getBoundingClientRect();
+    
+    const maxLeft = Math.max(0, areaRect.width - btnRect.width);
+    const maxTop = Math.max(0, areaRect.height - btnRect.height);
+    
+    const newLeft = Math.random() * maxLeft;
+    const newTop = Math.random() * maxTop;
+    
+    placeNoBtn(newTop, newLeft);
+    
+    // Yes Button wird größer mit jedem Versuch
+    const yesBtn = document.getElementById('yesBtn');
+    const newSize = Math.min(16 + dodgeCount * 1.5, 26);
+    const newPad = Math.min(14 + dodgeCount * 1.5, 22);
+    yesBtn.style.fontSize = newSize + 'px';
+    yesBtn.style.padding = newPad + 'px ' + (newPad * 2) + 'px';
+    
+    // No Button schrumpft
+    if (dodgeCount > 3) {
+      noBtn.style.fontSize = Math.max(16 - (dodgeCount - 3) * 1.5, 10) + 'px';
+      noBtn.style.padding = '10px 16px';
+    }
+  }
+  
+  // Touch & Mouse Events fürs Ausweichen
+  noBtn.addEventListener('mouseenter', dodgeNo);
+  noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); dodgeNo(); }, { passive: false });
+  noBtn.addEventListener('click', (e) => { e.preventDefault(); dodgeNo(); });
+  
+  // Init nach DOM-Load
+  window.addEventListener('load', () => setTimeout(initNoBtn, 100));
+  window.addEventListener('resize', initNoBtn);
+  
+  // ===== Screen Wechsel =====
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+  
+  function sayYes() {
+    showScreen('screen-yay');
+    createConfetti(15);
+  }
+  
+  function showInvitation() {
+    showScreen('screen-invitation');
+  }
+  
+  function showLocation() {
+    showScreen('screen-location');
+  }
+  
+  let chosenLocation = '';
+  
+  function confirmDate() {
+    chosenLocation = document.getElementById('locationInput').value;
+    
+    if (!chosenLocation) {
+      alert('Bitte such dir noch einen Ort aus 🥺');
+      return;
+    }
+    
+    document.getElementById('finalMsg').innerHTML = 
+      `Wir treffen uns am <strong>29.05.2026 um 19 Uhr</strong> ✨<br>
+       <br>
+       Im <strong>${chosenLocation}</strong> 💕<br>
+       <br>
+       Ich freu mich so auf dich &lt;3<br>
+       Ich liebe dich Mausbär<br>
+       <br>
+       Deine Anna 🌸`;
+    
+    showScreen('screen-done');
+    createConfetti(30);
+  }
+  
+  // ===== Mail senden =====
+  function sendMail() {
+    const subject = encodeURIComponent('Date-Night ist fix! 💕');
+    const body = encodeURIComponent(
+      `Hi Schatz,\n\n` +
+      `ich freu mich schon auf unser Date! 🌸\n\n` +
+      `📅 Wann: 29.05.2026 um 19 Uhr\n` +
+      `📍 Wo: ${chosenLocation}\n\n` +
+      `Bis dahin! 💖`
+    );
+    window.location.href = `mailto:annafrolov@hotmail.de?subject=${subject}&body=${body}`;
+  }
+  
+  // ===== Konfetti =====
+  function createConfetti(count) {
+    const emojis = ['🌸', '💕', '✨', '🎉', '💖', '🦋'];
+    for (let i = 0; i < count; i++) {
+      setTimeout(() => {
+        const petal = document.createElement('div');
+        petal.className = 'falling-petal';
+        petal.style.left = Math.random() * 100 + '%';
+        petal.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        petal.style.fontSize = (Math.random() * 15 + 15) + 'px';
+        petal.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        document.body.appendChild(petal);
+        setTimeout(() => petal.remove(), 5000);
+      }, i * 100);
+    }
+  }
+</script>
+
+</body>
+</html>
